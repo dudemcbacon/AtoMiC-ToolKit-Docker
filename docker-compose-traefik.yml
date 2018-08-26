@@ -7,7 +7,7 @@ services:
 
 ######### FRONTENDS ##########
 
-# Traefik Reverse Proxy
+  # Traefik Reverse Proxy
   traefik:
     hostname: traefik
     image: traefik:latest
@@ -20,15 +20,14 @@ services:
     ports:
       - "80:80"
       - "443:443"
-#      - "XXXX:8080"
     environment:
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
       - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
     labels:
       - "traefik.enable=true"
       - "traefik.backend=traefik"
-      - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"  
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /traefik"
+      - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /traefik"
       - "traefik.port=8080"
       - "traefik.docker.network=traefik_proxy"
     volumes:
@@ -36,14 +35,14 @@ services:
       - ${USERDIR}/docker/traefik:/etc/traefik
       - ${USERDIR}/docker/shared:/shared
 
- #Portainer - WebUI for Containers
+  # Portainer - WebUI for Containers
   portainer:
     image: portainer/portainer
     container_name: portainer
     restart: always
     command: -H unix:///var/run/docker.sock
-#    ports:
-#      - "XXXX:9000"
+    #ports:
+    #  - "XXXX:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${USERDIR}/docker/portainer/data:/data
@@ -55,12 +54,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=portainer"
-      - "traefik.frontend.rule=Host:portainer.${DOMAINNAME}"  
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
+      - "traefik.frontend.rule=Host:portainer.${DOMAINNAME}"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /portainer"
       - "traefik.port=9000"
       - "traefik.docker.network=traefik_proxy"
 
-# Organizer - Unified HTPC/Home Server Web Interface
+  # Organizer - Unified HTPC/Home Server Web Interface
   organizr:
     container_name: organizr
     restart: always
@@ -68,8 +67,8 @@ services:
     volumes:
       - ${USERDIR}/docker/organizr:/config
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:80"
+    #ports:
+    #  - "XXXX:80"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -79,37 +78,37 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=organizr"
-      - "traefik.frontend.rule=Host:organizr.${DOMAINNAME}"  
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /organizr"
+      - "traefik.frontend.rule=Host:organizr.${DOMAINNAME}"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /organizr"
       - "traefik.port=80"
       - "traefik.docker.network=traefik_proxy"
 
-# phpMyAdmin - WebUI for MariaDB
-phpmyadmin:
-    hostname: phpmyadmin
-    container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    links:
-      - mariadb:db
-#    ports:
-#      - XXXX:80
-    environment:
-      - PMA_HOST=mariadb
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    networks:
-      - traefik_proxy
-      - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=pma"
-      - "traefik.frontend.rule=Host:pma.${DOMAINNAME}"
-      - "traefik.port=80"
-      - "traefik.docker.network=traefik_proxy" 
+  # phpMyAdmin - WebUI for MariaDB
+  phpmyadmin:
+      hostname: phpmyadmin
+      container_name: phpmyadmin
+      image: phpmyadmin/phpmyadmin
+      restart: always
+      links:
+        - mariadb:db
+      #ports:
+      #  - XXXX:80
+      environment:
+        - PMA_HOST=mariadb
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      networks:
+        - traefik_proxy
+        - default
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=pma"
+        - "traefik.frontend.rule=Host:pma.${DOMAINNAME}"
+        - "traefik.port=80"
+        - "traefik.docker.network=traefik_proxy"
 
 ######### DOCKER RELATED ##########
 
-# Watchtower - Automatic Update of Containers/Apps
+  # Watchtower - Automatic Update of Containers/Apps
   watchtower:
     container_name: watchtower
     hostname: watchtower
@@ -121,7 +120,7 @@ phpmyadmin:
 
 ######### SMART HOME APPS ##########
 
-# Home Assistant - Smart Home Hub
+  # Home Assistant - Smart Home Hub
   homeassistant:
     container_name: homeassistant
     restart: always
@@ -134,8 +133,8 @@ phpmyadmin:
       - ${USERDIR}/docker/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:8123"
+    #ports:
+    #  - "XXXX:8123"
     privileged: true
     environment:
       - PUID=${PUID}
@@ -153,7 +152,7 @@ phpmyadmin:
 
 ######### DOWNLOADERS ##########
 
-# Transmission with VPN – Bittorrent Downloader
+  # Transmission with VPN – Bittorrent Downloader
   transmission-vpn:
     container_name: transmission-vpn
     image: haugene/transmission-openvpn
@@ -162,8 +161,8 @@ phpmyadmin:
     devices:
       - /dev/net/tun
     restart: always
-#    ports:
-#    - "XXXX:9091"
+    #ports:
+    #  - "XXXX:9091"
     dns:
       - 1.1.1.1
       - 1.0.0.1
@@ -178,7 +177,7 @@ phpmyadmin:
       - OPENVPN_PROVIDER=IPVANISH
       - OPENVPN_USERNAME=ipvanish_username
       - OPENVPN_PASSWORD=ipvanish_password
-      - OPENVPN_CONFIG="YYYYYYYYYYY" 
+      - OPENVPN_CONFIG="YYYYYYYYYYY"
       - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
       - LOCAL_NETWORK=192.168.1.0/24
       - PUID=${PUID}
@@ -196,12 +195,12 @@ phpmyadmin:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=transmission-vpn"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /transmission"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /transmission"
       - "traefik.frontend.rule=Host:transmission.${DOMAINNAME}"
       - "traefik.port=9091"
       - "traefik.docker.network=traefik_proxy"
 
-# qBittorrent without VPN – Bittorrent Downloader (Alternative)
+  # qBittorrent without VPN – Bittorrent Downloader (Alternative)
   qbittorrent:
     image: "linuxserver/qbittorrent"
     container_name: "qbittorrent"
@@ -210,7 +209,7 @@ phpmyadmin:
       - ${USERDIR}/Downloads/completed:/downloads
       - ${USERDIR}/docker/shared:/shared
     ports:
-#      - "XXXX:8080"
+      #- "XXXX:8080"
       - "6881:6881"
       - "6881:6881/udp"
     restart: always
@@ -224,12 +223,12 @@ phpmyadmin:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=qbittorrent"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /qbittorrent"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefixStrip: /qbittorrent"
       - "traefik.frontend.rule=Host:qbit.${DOMAINNAME}"
       - "traefik.port=XXXX"
       - "traefik.docker.network=traefik_proxy"
 
-# SABnzbd – Usenet (NZB) Downloader
+  # SABnzbd – Usenet (NZB) Downloader
   sabnzbd:
     image: "linuxserver/sabnzbd"
     container_name: "sabnzbd"
@@ -238,8 +237,8 @@ phpmyadmin:
       - ${USERDIR}/Downloads/completed:/downloads
       - ${USERDIR}/Downloads/incomplete:/incomplete-downloads
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#        - "XXXX:8080"
+    #ports:
+    #  - "XXXX:8080"
     restart: always
     environment:
       - PUID=${PUID}
@@ -251,13 +250,13 @@ phpmyadmin:
       - "traefik.enable=true"
       - "traefik.backend=sabnzbd"
       - "traefik.frontend.rule=Host:sabnzbd.${DOMAINNAME}"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /sabnzbd"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /sabnzbd"
       - "traefik.port=8080"
       - "traefik.docker.network=traefik_proxy"
 
 ######### PERSONAL VIDEO RECORDERS ##########
 
-# Radarr – Movie Download and Management
+  # Radarr – Movie Download and Management
   radarr:
     image: "linuxserver/radarr"
     container_name: "radarr"
@@ -267,8 +266,8 @@ phpmyadmin:
       - ${USERDIR}/media/movies:/movies
       - "/etc/localtime:/etc/localtime:ro"
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:7878"
+    # ports:
+    #  - "XXXX:7878"
     restart: always
     environment:
       - PUID=${PUID}
@@ -279,12 +278,12 @@ phpmyadmin:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=radarr"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /radarr"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /radarr"
       - "traefik.frontend.rule=Host:radarr.${DOMAINNAME}"
       - "traefik.port=7878"
       - "traefik.docker.network=traefik_proxy"
 
-# Sonarr – TV Show Download and Management
+  # Sonarr – TV Show Download and Management
   sonarr:
     image: "linuxserver/sonarr"
     container_name: "sonarr"
@@ -294,8 +293,8 @@ phpmyadmin:
       - ${USERDIR}/media/tvshows:/tv
       - "/etc/localtime:/etc/localtime:ro"
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#        - "XXXX:8989"
+    #ports:
+    #  - "XXXX:8989"
     restart: always
     environment:
       - PUID=${PUID}
@@ -306,12 +305,12 @@ phpmyadmin:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=sonarr"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /sonarr"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /sonarr"
       - "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
       - "traefik.port=8989"
       - "traefik.docker.network=traefik_proxy"
 
-#LIDARR - Music Download and Management
+  #LIDARR - Music Download and Management
   lidarr:
     image: "linuxserver/lidarr"
     hostname: lidarr
@@ -322,8 +321,8 @@ phpmyadmin:
       - ${USERDIR}/media/music:/music
       - "/etc/localtime:/etc/localtime:ro"
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:8686"
+    #ports:
+    #  - "XXXX:8686"
     restart: always
     environment:
       - PUID=${PUID}
@@ -334,14 +333,14 @@ phpmyadmin:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=lidarr"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /lidarr"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /lidarr"
       - "traefik.frontend.rule=Host:lidarr.${DOMAINNAME}"
       - "traefik.port=8686"
       - "traefik.docker.network=traefik_proxy"
 
 ######### MEDIA SERVER APPS ##########
 
-# Plex Media Server
+  # Plex Media Server
   plexms:
     container_name: plexms
     restart: always
@@ -378,7 +377,7 @@ phpmyadmin:
       - "traefik.protocol=http"
       - "traefik.docker.network=traefik_proxy"
 
-# Tautulli (aka PlexPy) – Monitoring Plex Usage
+  # Tautulli (aka PlexPy) – Monitoring Plex Usage
   tautulli:
     container_name: tautulli
     restart: always
@@ -387,8 +386,8 @@ phpmyadmin:
       - ${USERDIR}/docker/tautulli/config:/config
       - ${USERDIR}/docker/tautulli/logs:/logs:ro
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:8181"
+    #ports:
+    #- "XXXX:8181"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -399,11 +398,11 @@ phpmyadmin:
       - "traefik.enable=true"
       - "traefik.backend=tautulli"
       - "traefik.frontend.rule=Host:tautulli.${DOMAINNAME}"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /tautulli"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /tautulli"
       - "traefik.port=8181"
       - "traefik.docker.network=traefik_proxy"
 
-# Ombi – Accept Requests for your Media Server
+  # Ombi – Accept Requests for your Media Server
   ombi:
     container_name: ombi
     restart: always
@@ -411,8 +410,8 @@ phpmyadmin:
     volumes:
       - ${USERDIR}/docker/ombi:/config
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:3579"
+    #ports:
+    #  - "XXXX:3579"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -423,13 +422,13 @@ phpmyadmin:
       - "traefik.enable=true"
       - "traefik.backend=ombi"
       - "traefik.frontend.rule=Host:ombi.${DOMAINNAME}"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /ombi"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /ombi"
       - "traefik.port=3579"
       - "traefik.docker.network=traefik_proxy"
 
 ######### SEARCHERS ##########
 
-# NZBHydra – NZB Meta Search
+  # NZBHydra – NZB Meta Search
   hydra:
     image: "linuxserver/hydra"
     container_name: "hydra"
@@ -437,8 +436,8 @@ phpmyadmin:
       - ${USERDIR}/docker/hydra:/config
       - ${USERDIR}/Downloads:/downloads
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:5075"
+    #ports:
+    #- "XXXX:5075"
     restart: always
     environment:
       - PUID=${PUID}
@@ -450,11 +449,11 @@ phpmyadmin:
       - "traefik.enable=true"
       - "traefik.backend=hydra"
       - "traefik.frontend.rule=Host:hydra.${DOMAINNAME}"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /hydra"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /hydra"
       - "traefik.port=5075"
-      - "traefik.docker.network=traefik_proxy" 
+      - "traefik.docker.network=traefik_proxy"
 
-# Jackett – Torrent Proxy
+  # Jackett – Torrent Proxy
   jackett:
     image: "linuxserver/jackett"
     container_name: "jackett"
@@ -463,8 +462,8 @@ phpmyadmin:
       - ${USERDIR}/Downloads/completed:/downloads
       - "/etc/localtime:/etc/localtime:ro"
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:9117"
+    #ports:
+    #  - "XXXX:9117"
     restart: always
     environment:
       - PUID=${PUID}
@@ -476,13 +475,13 @@ phpmyadmin:
       - "traefik.enable=true"
       - "traefik.backend=jackett"
       - "traefik.frontend.rule=Host:jackett.${DOMAINNAME}"
-#      - "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /jackett"
+      #- "traefik.frontend.rule=Host:${DOMAINNAME}; PathPrefix: /jackett"
       - "traefik.port=9117"
       - "traefik.docker.network=traefik_proxy"
 
 ######### UTILITIES ##########
 
-# MariaDB – Database Server for your Apps
+  # MariaDB – Database Server for your Apps
   mariadb:
     image: "linuxserver/mariadb"
     container_name: "mariadb"
@@ -501,7 +500,7 @@ phpmyadmin:
       - PGID=${PGID}
       - TZ=${TZ}
 
-# NextCloud – Your Own Cloud Storage
+  # NextCloud – Your Own Cloud Storage
   nextcloud:
     container_name: nextcloud
     restart: always
@@ -510,8 +509,8 @@ phpmyadmin:
       - ${USERDIR}/docker/nextcloud:/config
       - ${USERDIR}/shared_data:/data
       - ${USERDIR}/docker/shared:/shared
-#    ports:
-#      - "XXXX:443"
+    #ports:
+    #  - "XXXX:443"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
